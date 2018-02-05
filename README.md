@@ -2,7 +2,7 @@
 
 1、页面ui（flex + sass + vue-router）
 
-Flex：Flex 布局，可以简便、完整、响应式地实现各种页面布局。
+ Flex：Flex 布局，可以简便、完整、响应式地实现各种页面布局。
 sass3.0：CSS预处理器，是一种CSS的开发工具，提供了许多便利的写法，大大节省了设计者的时间，使得CSS的开发，变得简单和可维护。
 Vue-router： vue-router进行路由跳转的处理。
 
