@@ -24,7 +24,9 @@
   import { mapGetters } from 'vuex'
   export default {
     data () {
-      return {}
+      return {
+        selects: ''
+      }
     },
     props: {
       good: {
@@ -44,20 +46,23 @@
           return item.id === this.good.id
         })
         if (index > -1) {
-//          this.good = JSON.parse(JSON.stringify(goodsList[index]))
+          // 若存在提交当前购物车中选择商品至父亲
+          this.selects = JSON.parse(JSON.stringify(goodsList[index]))
           return goodsList[index].count
         } else {
+          // 若不存在，选择当前商品至父亲
+          this.selects = JSON.parse(JSON.stringify(this.good))
           return 0
         }
       }
     },
     methods: {
       decreaseCart () {
-        this.$emit('minus', this.good)
+        this.$emit('minus', this.selects)
       },
       addCart () {
         // 添加商品数量
-        this.$emit('add', this.good)
+        this.$emit('add', this.selects)
       }
     },
     mounted () {}

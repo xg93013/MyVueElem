@@ -61,12 +61,12 @@
           <span v-if="this.cartList.goodsList.length === 0">未选购商品</span>
           <span v-if="this.cartList.goodsList.length !== 0" class="high-price">￥{{ cartTotalMoney }}</span>
         </p>
-        <p class="little">另需配送费{{ packetMoney }}元</p>
+        <p class="little">另需配送费{{ shopInfo.packet.money }}元</p>
       </div>
       <div class="price">
         <!--<span class="text">￥20起送</span>-->
         <button class="go-cart-gray" v-if="this.cartList.goodsList.length === 0">￥20起送</button>
-        <router-link to="/shopcart" tag="button" class="go-cart" @click.stop.prevent="goCart" v-if="this.cartList.goodsList.length !== 0">去结算</router-link>
+        <router-link to="/shopcart" tag="button" class="go-cart" @click.stop.prevent="goCart" v-if="this.cartList.goodsList.length !== 0" replace>去结算</router-link>
         <!--<button class="go-cart" ></button>-->
       </div>
     </div>
@@ -99,7 +99,7 @@
           </transition-group>
           <div class="pack-money">
             <span class="name">餐盒费</span>
-            <span class="money">￥{{ boxMoney }}</span>
+            <span class="money">￥{{ shopInfo.packet.box }}</span>
           </div>
         </div>
       </my-scroll>
@@ -169,13 +169,28 @@
           // 重新渲染列表
           this.$refs.listScrollRef.refresh()
         }, 30)
+      },
+      cartTotalMoney (newV) {
+        if (this.others.totalMoney) {
+          this.others.totalMoney = newV
+        }
       }
     },
     created () {
       this.listenScroll = true
       this.probeType = 3
-      this.shopId = this.$route.query.id
+      this.shopId = Number(this.$route.query.id)
       this._getShopInfo(this.shopId)
+      this.$nextTick(() => {
+        // 商品及左侧标题
+        this._getGoodsInfo()
+        // 重新渲染滚动列表
+        setTimeout(() => {
+          this.$refs.leftScroll.refresh()
+          this.$refs.rightScroll.refresh()
+          this.$refs.listScrollRef.refresh()
+        }, 300)
+      })
     },
     computed: {
       ...mapGetters(['showStore', 'cartList']),
@@ -186,20 +201,10 @@
           return totalMoney
         }
         for (let i = 0; i < goodsList.length; i++) {
-          totalMoney = Math.add(totalMoney, goodsList[i].totalPrice)
+          totalMoney = parseFloat((totalMoney + goodsList[i].totalPrice).toFixed(2))
         }
-        totalMoney = Math.add(totalMoney, this.othersInfo.packetMoney)
+        totalMoney = parseFloat((totalMoney + this.cartList.others.packetMoney).toFixed(2))
         return totalMoney
-      },
-      packetMoney () {
-        if (this.shopInfo.packet.money) {
-          return this.shopInfo.packet.money
-        } else {
-          return 0
-        }
-      },
-      boxMoney () {
-        return this.shopInfo.packet.box
       }
     },
     methods: {
@@ -241,7 +246,6 @@
           this.showChoice = true // 显示规格
         } else {
           // 增加商品
-          console.log(this.selectGood)
           this.selectGood.count++
           this.addToCart()
         }
@@ -264,8 +268,7 @@
           packetMoney: this.shopInfo.packet.box, // 打包费
           dispatching: this.shopInfo.packet.money, // 配送费
           shopName: this.shopInfo.shopName, // 商家名称
-          shopId: this.shopId, // 商家id
-          totalMoney: this.cartTotalMoney
+          shopId: this.shopId // 商家id
         }
         // 添加商品
         this.addCart({
@@ -313,6 +316,13 @@
         }
         return rsArr
       },
+      _getGoodsInfo () {
+        // 获取所有商品
+        shopGoods(this.shopId).then((res) => {
+          this.goodsList = this._formatGoods(res.data)
+          this._getGoodsType()
+        })
+      },
       // 根据商品列表获取商品类别
       _getGoodsType () {
         let typeArr = []
@@ -341,10 +351,6 @@
     },
     mounted () {
       // 所有商品
-      shopGoods(this.shopId).then((res) => {
-        this.goodsList = this._formatGoods(res.data)
-        this._getGoodsType()
-      })
     }
   }
 </script>

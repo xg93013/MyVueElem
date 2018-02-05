@@ -59,9 +59,9 @@
     <!--@touchstart.prevent="Touchstart" @touchmove.prevent="Touchmove" @touchend.prevent="Touchend-->
     <div class="shop-box" ref="shopBoxRefs">
       <div class="shop-class">
-        <router-link tag="div" :to="{ name:'goods',query: { id: shopId }}" class="item"><span>点餐</span></router-link>
-        <router-link tag="div" :to="{ name:'evaluate',query: { id: shopId }}" class="item"><span>评价</span></router-link>
-        <router-link tag="div" :to="{ name:'store',query: { id: shopId }}"  class="item"><span>商家</span></router-link>
+        <router-link tag="div" :to="{ name:'goods',query: { id: shopId }}" class="item" replace><span>点餐</span></router-link>
+        <router-link tag="div" :to="{ name:'evaluate',query: { id: shopId }}" class="item" replace><span>评价</span></router-link>
+        <router-link tag="div" :to="{ name:'store',query: { id: shopId }}"  class="item" replace><span>商家</span></router-link>
       </div>
       <router-view></router-view>
     </div>
@@ -81,7 +81,18 @@
       return {
         query: '', // 搜索关键字
         shopId: 0, // 商家id
-        shopInfo: {}, // 商家信息
+        shopInfo: {
+          shopName: '',
+          shopUrl: '',
+          shopState: {
+            stateScore: '',
+            stateOrder: ''
+          },
+          position: {
+            packTime: '',
+            distance: ''
+          }
+        }, // 商家信息
         topHeight: 0,
         imgBaseUrl
       }
@@ -196,7 +207,10 @@
               @include sc(1.1rem, $color-white);
             }
             .state {
-              @include sc(0.7rem, $color-white);
+              span{
+                display: inline-block;
+                @include sc(0.7rem, $color-text-e);
+              }
             }
             .tips {
               @include no-wrap();

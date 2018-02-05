@@ -1,12 +1,11 @@
 <template>
-  <div class="my-shopcart">
+  <div class="my-shopcart" v-show="showFlag">
     <div class="head">
-      <router-link tag="div" class="head_goback" :to="{ name:'shop',query: { id: cartList.others.shopId }}" replace>
+      <div tag="div" class="head_goback" @click="closeCart">
         <svg class="icon" aria-hidden="true">
           <use xlink:href="#icon-back"></use>
         </svg>
-      </router-link>
-      <span class="title">购物车</span>
+      </div>
     </div>
     <!--<header-bar :goBack="true"></header-bar>-->
     <my-scroll class="scroll-wrapper">
@@ -62,7 +61,7 @@
     </my-scroll>
     <!--结算-->
     <div class="cal-box">
-      <div class="price">￥{{ cartTotalMoney }}</div>
+      <div class="price">￥{{ cartList.others.totalMoney }}</div>
       <button class="pay">去结算</button>
     </div>
   </div>
@@ -70,7 +69,7 @@
 <script>
   import MyScroll from '@/components/common/MyScroll'
   import headerBar from '@/components/header/header'
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapMutations } from 'vuex'
   export default {
     components: {
       headerBar,
@@ -78,26 +77,22 @@
     },
     data () {
       return {
-        headerText: '地址'
+        headerText: '地址',
+        showFlag: true
       }
     },
     computed: {
       ...mapGetters(['cartList']),
-      cartTotalMoney () {
-        let totalMoney = 0
-        let goodsList = this.cartList.goodsList.slice(0)
-        if (goodsList.length === 0) {
-          return totalMoney
-        }
-        for (let i = 0; i < goodsList.length; i++) {
-          totalMoney = parseFloat((totalMoney + goodsList[i].totalPrice).toFixed(2))
-        }
-        totalMoney = parseFloat((totalMoney + this.cartList.others.packetMoney + this.cartList.others.dispatching).toFixed(2))
-        return totalMoney
+      closeCart () {
+        this.showFlag = false
       }
     },
-    methods: {},
-    created () {}
+    methods: {
+      ...mapMutations(['SET_SHOWSTORE'])
+    },
+    created () {
+      this.SET_SHOWSTORE(true)
+    }
   }
 </script>
 <style lang="scss" scoped>
@@ -115,20 +110,11 @@
     .head{
       width: 100%;
       height: 3rem;
-      background: $color-theme;
       position: relative;
-      text-align: center;
-      line-height: 3rem;
       .head_goback{
         position: absolute;
         left: 1rem;
-        .icon{
-          fill: $color-white;
-        }
-        /*top: 1rem;*/
-      }
-      span{
-        color: $color-white;
+        top: 1rem;
       }
     }
     .scroll-wrapper{
@@ -156,7 +142,6 @@
             .right{
               flex: 0 0 6rem;
               width: 6rem;
-              text-align: right;
               color: $color-theme;
               .text{
                 @include sc(0.8rem, $color-theme)
@@ -196,7 +181,6 @@
             .price{
               flex: 0 0 4rem;
               width: 4rem;
-              text-align: right;
               @include sc(0.9rem, $color-text-a)
             }
           }
