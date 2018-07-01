@@ -82,7 +82,7 @@
               </div>
             </div>
             <div class="find-more">
-              <router-link to="/find/findList" tag="span">查看更多</router-link>
+              <router-link to="/find/findList" tag="span">查看更多new</router-link>
             </div>
           </div>
         </section>
