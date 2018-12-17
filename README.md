@@ -5,6 +5,7 @@
     Flex：Flex 布局，可以简便、完整、响应式地实现各种页面布局。
     sass3.0：CSS预处理器，大大节省了设计者的时间，使得CSS的开发，变得简单和可维护。
     Vue-router： vue-router进行路由跳转的处理。
+    new-test-commit
 
 
 ### 接口调用
